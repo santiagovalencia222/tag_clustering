@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zeef.tagclustering.tagsignature.frequencies.TermFrequencyInverseDocumentFrequency;
+import com.zeef.tagclustering.tagsignature.frequencies.IFrequency;
+import com.zeef.tagclustering.tagsignature.frequencies.InverseDocumentFrequencyImpl;
+import com.zeef.tagclustering.tagsignature.frequencies.TermFrequencyImpl;
 
 public class Main {
 
@@ -31,7 +33,6 @@ public class Main {
 		}
 		System.out.println(htmlParser.getUrlMetaKeyWords().size());*/
 
-		TermFrequencyInverseDocumentFrequency tfidf = new TermFrequencyInverseDocumentFrequency();
 		List<String> docs = new ArrayList<>();
 		docs.add("Hello, thIs iS AN example document. ThiS exampLe contains special characters!");
 		docs.add("This is another example of a great document for testing");
@@ -39,17 +40,19 @@ public class Main {
 		docs.add("Nor this,, or the other one that");
 		docs.add("Example again appearing in this document, example in this document, in this document, in this document, in this document, in this document, in this document, in this document, example, example, example, example, example, example, example");
 		docs.add("blah this is another document without the word");
-		Double idf = tfidf.inverseDocumentFrequency("example", docs);
+		IFrequency idf = new InverseDocumentFrequencyImpl(docs);
+		Double idfFreq = idf.getFrequency("example");
 		for (String doc : docs) {
-			Double tf = tfidf.termFrequency("example", doc);
+			IFrequency tf = new TermFrequencyImpl(doc);
+			Double tfFreq = tf.getFrequency("example");
 			System.out.println("Document: " + doc);
-			System.out.println("Term frequency of the word example: " + tf);
+			System.out.println("Term frequency of the word example: " + tfFreq);
 			System.out.println("Term frequency weigth of the word example: " +
-								tfidf.termFrequencyWeight(tf));
+								tf.calculateFrequencyWeight(tfFreq));
 			System.out.println("\n");
 		}
-		System.out.println("Inverse Document frequency of the word example: " + idf);
+		System.out.println("Inverse Document frequency of the word example: " + idfFreq);
 		System.out.println("Inverse Document frequency weigth of the word example: " +
-						tfidf.inverseDocumentFrequencyWeight(idf, new Double(docs.size())));
+							idf.calculateFrequencyWeight(idfFreq));
 	}
 }

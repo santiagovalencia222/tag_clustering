@@ -2,7 +2,7 @@ package com.zeef.tagclustering.tagsignature.frequencies;
 
 import java.util.List;
 
-import com.zeef.tagclustering.tagsignature.document.DocumentManager;
+import com.zeef.tagclustering.documentsmanager.DocumentManager;
 
 public class TermFrequencyImpl implements IFrequency {
 

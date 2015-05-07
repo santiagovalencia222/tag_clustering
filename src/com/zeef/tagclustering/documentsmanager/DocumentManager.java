@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.tagsignature.document;
+package com.zeef.tagclustering.documentsmanager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,7 +18,6 @@ public class DocumentManager {
 	 * Implementation decisions:
 	 * 		1. Read stop words from file.
 	 * 		2. Use RegEx to parse input.
-	 * 		2. Store tf in a map. (put it on the method that populates the map)
 	 * @param document
 	 * @return wordsInDocument list of words in the document excluding stop words.
 	 */
