@@ -12,7 +12,7 @@ import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.zeef.tagclustering.linkmanager.LinksInspector;
+import com.zeef.tagclustering.linkmanager.LinkInspector;
 
 public class HTMLParser {
 
@@ -23,7 +23,7 @@ public class HTMLParser {
 	}
 
 	public void extractMetaKeyWordsFromLinksSet() throws SQLException {
-		LinksInspector linkInspector = new LinksInspector();
+		LinkInspector linkInspector = new LinkInspector();
 		Set<String> linksSet = linkInspector.getPositionedLinks();
 		for (String link : linksSet) {
 			try {

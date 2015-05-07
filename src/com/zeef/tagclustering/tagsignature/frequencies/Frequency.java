@@ -1,6 +1,6 @@
 package com.zeef.tagclustering.tagsignature.frequencies;
 
-public interface IFrequency {
+public interface Frequency {
 
 	public Double getFrequency(String term);
 

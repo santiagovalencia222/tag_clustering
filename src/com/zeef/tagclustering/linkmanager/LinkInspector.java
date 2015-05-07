@@ -16,10 +16,10 @@ import java.util.Set;
 
 import com.zeef.tagclustering.model.Link;
 
-public class LinksInspector {
+public class LinkInspector {
 
 	private List<String> ilegalLinks = new ArrayList<>();
-	private LinksRetriever retriever = new LinksRetriever();
+	private LinkRetriever retriever = new LinkRetriever();
 
 	public List<String> getIlegalLinks() {
 		return ilegalLinks;

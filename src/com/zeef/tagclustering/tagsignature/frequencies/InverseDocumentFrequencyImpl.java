@@ -2,7 +2,7 @@ package com.zeef.tagclustering.tagsignature.frequencies;
 
 import java.util.List;
 
-public class InverseDocumentFrequencyImpl implements IFrequency {
+public class InverseDocumentFrequencyImpl implements Frequency {
 
 	private List<String> documents;
 
@@ -12,7 +12,7 @@ public class InverseDocumentFrequencyImpl implements IFrequency {
 
 	@Override
 	public Double getFrequency(String term) {
-		IFrequency termFrequencyInstance;
+		Frequency termFrequencyInstance;
 		Double inverseDocumentFrequency = 0.0;
 		for (String document : documents) {
 			termFrequencyInstance = new TermFrequencyImpl(document);

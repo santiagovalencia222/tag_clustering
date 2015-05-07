@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.documentsmanager;
+package com.zeef.tagclustering.documentmanager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DocumentManager {
+public class DocumentInspector {
 
 	/**
 	 * Generates a list of words excluding stop words.

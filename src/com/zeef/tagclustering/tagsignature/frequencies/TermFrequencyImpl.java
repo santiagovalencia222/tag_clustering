@@ -2,9 +2,9 @@ package com.zeef.tagclustering.tagsignature.frequencies;
 
 import java.util.List;
 
-import com.zeef.tagclustering.documentsmanager.DocumentManager;
+import com.zeef.tagclustering.documentmanager.DocumentInspector;
 
-public class TermFrequencyImpl implements IFrequency {
+public class TermFrequencyImpl implements Frequency {
 
 	private String document;
 
@@ -14,7 +14,7 @@ public class TermFrequencyImpl implements IFrequency {
 
 	@Override
 	public Double getFrequency(String term) {
-		DocumentManager documentManager = new DocumentManager();
+		DocumentInspector documentManager = new DocumentInspector();
 		Double termFrequency = 0.0;
 		List<String> wordsInDocument = documentManager.getWordsInDocument(document);
 		for (String wordInDocument : wordsInDocument) {

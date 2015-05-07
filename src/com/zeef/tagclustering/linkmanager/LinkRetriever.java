@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 
 import com.zeef.tagclustering.db.DBConnection;
 
-public class LinksRetriever {
+public class LinkRetriever {
 
 	public ResultSet getAllLinks() {
 		return executeQuery("SELECT link.target_url FROM link");
