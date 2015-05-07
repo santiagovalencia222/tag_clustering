@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zeef.tagclustering.tagsignature.tfidf.TermFrequencyInverseDocumentFrequency;
+import com.zeef.tagclustering.tagsignature.frequencies.TermFrequencyInverseDocumentFrequency;
 
 public class Main {
 
