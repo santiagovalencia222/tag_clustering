@@ -18,7 +18,7 @@ public class TagSignature {
 		docs.add("Hello, thIs iS AN example document. ThiS exampLe contains special characters!");
 		docs.add("This is another example of a great document for testing");
 		docs.add("This document doesnt have the word");
-		docs.add("Nor this,, or the other one example that Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago Santiago ");
+		docs.add("Nor this,, or the other one that ");
 		docs.add("Example again appearing in this document, example in this document, in this document, in this document, in this document, in this document, in this document, in this document, example, example, example, example, example, example, example");
 		docs.add("blah this is another document without the word");
 		Frequency idf = new InverseDocumentFrequencyImpl(docs);
