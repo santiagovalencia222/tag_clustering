@@ -32,6 +32,7 @@ public class LinkRetriever {
 
 	public ResultSet executeQuery(String query) {
 		DBConnection connection = new DBConnection();
+		connection.doZEEFConnection();
 		return connection.executeQuery(query);
 	}
 }

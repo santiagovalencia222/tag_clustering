@@ -10,7 +10,7 @@ public class DBConnection {
 
 	private Connection connection = null;
 
-	public DBConnection() {
+	public void doZEEFConnection() {
 		try {
 			connection = DriverManager.getConnection(
 					"jdbc:postgresql://pgdb0.amsterdam.kizitos.com:5432/zeef_update", "zeef",
@@ -21,8 +21,15 @@ public class DBConnection {
 		}
 	}
 
-	public Connection getConnection() {
-		return connection;
+	public void doLocalConnection() {
+		try {
+			connection = DriverManager.getConnection(
+					"jdbc:postgresql://localhost/tag_clustering", "admin",
+					"");
+		} catch (SQLException e) {
+			System.out.println("Connection Failed!");
+			e.printStackTrace();
+		}
 	}
 
 	public ResultSet executeQuery(String query) {

@@ -11,6 +11,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 public class DocumentInspector {
 
 	/**
@@ -58,6 +67,27 @@ public class DocumentInspector {
 			}
 		}
 		return result;
+	}
+
+	public Set<String> getWordSynonyms(String word) {
+		Set<String> synonyms = new HashSet<>();
+		try {
+			HttpResponse<JsonNode> response = Unirest.get("http://wikisynonyms.ipeirotis.com/api/" + word)
+			.header("X-Mashape-Key", "mMerZb5CRdmshgIMA5Or9i3z2kNap1aORpWjsnMIvcmA0xKW5E")
+			.header("Accept", "application/json")
+			.asJson();
+			JSONObject jsonObject = response.getBody().getObject();
+			JSONArray jsonArray = jsonObject.getJSONArray("terms");
+			for (int i = 0 ; i < jsonArray.length() ; i++) {
+				jsonObject = (JSONObject) jsonArray.get(i);
+				synonyms.add((String) jsonObject.get("term"));
+			}
+		} catch (UnirestException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return synonyms;
 	}
 
 }

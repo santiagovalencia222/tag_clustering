@@ -1,10 +1,8 @@
 package com.zeef.tagclustering.main;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map.Entry;
 
-import com.zeef.tagclustering.tagsignature.TagSignature;
+import com.zeef.tagclustering.documentmanager.DocumentInspector;
 
 public class Main {
 
@@ -31,10 +29,19 @@ public class Main {
 		}
 		System.out.println(htmlParser.getUrlMetaKeyWords().size());*/
 
-		TagSignature tagSignature = new TagSignature();
+		/*TagSignature tagSignature = new TagSignature();
 		tagSignature.calculateTFIDF();
 		for (Entry<String, List<Double>> entry : tagSignature.getTermFrequencyInverseDocumentFrequencyVector().entrySet()) {
 			System.out.println(entry);
-		}
+		}*/
+
+		/*DocumentRetriever dr = new DocumentRetriever();
+		ResultSet resultSet = dr.getAllDocuments();
+		while (resultSet.next()) {
+			System.out.println(resultSet.getString("name"));
+		}*/
+
+		DocumentInspector di = new DocumentInspector();
+		System.out.println(di.getWordSynonyms("software"));
 	}
 }

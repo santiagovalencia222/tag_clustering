@@ -16,6 +16,7 @@ public class InverseDocumentFrequencyImpl implements Frequency {
 		Double inverseDocumentFrequency = 0.0;
 		for (String document : documents) {
 			termFrequencyInstance = new TermFrequencyImpl(document);
+			//TODO Find a way to avoid getting the term frequency again
 			Double termFrequency = termFrequencyInstance.getFrequency(term);
 			if (termFrequency > 0) {
 				inverseDocumentFrequency++;
