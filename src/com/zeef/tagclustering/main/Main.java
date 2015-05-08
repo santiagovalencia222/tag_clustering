@@ -2,8 +2,6 @@ package com.zeef.tagclustering.main;
 
 import java.sql.SQLException;
 
-import com.zeef.tagclustering.documentmanager.DocumentInspector;
-
 public class Main {
 
 	public static void main(String[] args) throws SQLException {
@@ -40,8 +38,5 @@ public class Main {
 		while (resultSet.next()) {
 			System.out.println(resultSet.getString("name"));
 		}*/
-
-		DocumentInspector di = new DocumentInspector();
-		System.out.println(di.getWordSynonyms("software"));
 	}
 }
