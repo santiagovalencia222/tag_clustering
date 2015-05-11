@@ -3,10 +3,15 @@ package com.zeef.tagclustering.documentmanager;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +24,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.zeef.tagclustering.htmlparser.HTMLParser;
+import com.zeef.tagclustering.linkmanager.LinkInspector;
 
 public class DocumentInspector {
 
@@ -69,18 +76,22 @@ public class DocumentInspector {
 		return result;
 	}
 
-	public Set<String> getWordSynonyms(String word) {
+	public Set<String> getWordWikiSynonyms(String term) {
 		Set<String> synonyms = new HashSet<>();
 		try {
-			HttpResponse<JsonNode> response = Unirest.get("http://wikisynonyms.ipeirotis.com/api/" + word)
+			HttpResponse<JsonNode> response = Unirest.get("http://wikisynonyms.ipeirotis.com/api/" + term)
 			.header("X-Mashape-Key", "mMerZb5CRdmshgIMA5Or9i3z2kNap1aORpWjsnMIvcmA0xKW5E")
 			.header("Accept", "application/json")
 			.asJson();
 			JSONObject jsonObject = response.getBody().getObject();
 			JSONArray jsonArray = jsonObject.getJSONArray("terms");
 			for (int i = 0 ; i < jsonArray.length() ; i++) {
-				jsonObject = (JSONObject) jsonArray.get(i);
-				synonyms.add((String) jsonObject.get("term"));
+				if (jsonArray.get(i).getClass().equals(jsonObject.getClass())) {
+					jsonObject = (JSONObject) jsonArray.get(i);
+					synonyms.add((String) jsonObject.get("term"));
+				} else if (jsonArray.get(i).getClass().equals(String.class)) {
+					synonyms.add((String) jsonArray.get(i));
+				}
 			}
 		} catch (UnirestException e) {
 			e.printStackTrace();
@@ -88,6 +99,21 @@ public class DocumentInspector {
 			e.printStackTrace();
 		}
 		return synonyms;
+	}
+
+	public Map<String, List<String>> getTaggedDocuments() throws MalformedURLException {
+		Map<String, List<String>> taggedDocuments = new HashMap<>();
+		LinkInspector li = new LinkInspector();
+		HTMLParser parser = new HTMLParser();
+		Map<String, Set<String>> taggedLinks = li.linksGroupedByTag();
+		for (Entry<String, Set<String>> entry : taggedLinks.entrySet()) {
+			List<String> documents = new ArrayList<>();
+			for (String url : entry.getValue()) {
+				documents.add(parser.getBodyTextFromUrl(new URL(url)));
+			}
+			taggedDocuments.put(entry.getKey(), documents);
+		}
+		return taggedDocuments;
 	}
 
 }

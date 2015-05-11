@@ -22,6 +22,11 @@ public class HTMLParser {
 		return urlMetaKeyWords;
 	}
 
+	public String getBodyTextFromUrl(URL url) {
+		Document document = getDocument(url);
+		return document.body().text();
+	}
+
 	public void extractMetaKeyWordsFromLinksSet() throws SQLException {
 		LinkInspector linkInspector = new LinkInspector();
 		Set<String> linksSet = linkInspector.getPositionedLinks();

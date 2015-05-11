@@ -1,19 +1,28 @@
 package com.zeef.tagclustering.main;
 
+import java.net.MalformedURLException;
 import java.sql.SQLException;
+
+import com.zeef.tagclustering.documentmanager.DocumentInspector;
+import com.zeef.tagclustering.linkmanager.LinkInspector;
 
 public class Main {
 
-	public static void main(String[] args) throws SQLException {
-		/*LinksInspector linkInspector = new LinksInspector();
-		System.out.println("Tags grouped by Links:\n");
+	public static void main(String[] args) throws SQLException, MalformedURLException {
+		LinkInspector linkInspector = new LinkInspector();
+		/*System.out.println("Tags grouped by Links:\n");
 		for (Entry<String, Set<String>> entry : linkInspector.tagsGroupedByLink().entrySet()) {
 			System.out.println(entry);
 		}
-		System.out.println("\n\n---------------------------------\n\nLinks grouped by Tags:\n");
 		for (Entry<String, Set<String>> entry : linkInspector.linksGroupedByTag().entrySet()) {
 			System.out.println(entry);
-		}*/
+		}
+		System.out.println("\n---------------------------------\n\n");*/
+
+		DocumentInspector di = new DocumentInspector();
+		for (String synonym : di.getWordWikiSynonyms("polyamory")) {
+			System.out.println(synonym);
+		}
 
 		/*linkInspector.showHostOccurenceBucket();
 		linkInspector.generateCSVHostInPages();*/
