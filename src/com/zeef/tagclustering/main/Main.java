@@ -2,27 +2,47 @@ package com.zeef.tagclustering.main;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
+import java.util.Map.Entry;
 
-import com.zeef.tagclustering.documentmanager.DocumentInspector;
-import com.zeef.tagclustering.linkmanager.LinkInspector;
+import com.zeef.tagclustering.TagClusteringAlgorithm;
+import com.zeef.tagclustering.model.MyPair;
+import com.zeef.tagclustering.model.Tag;
 
 public class Main {
 
 	public static void main(String[] args) throws SQLException, MalformedURLException {
-		LinkInspector linkInspector = new LinkInspector();
+		TagClusteringAlgorithm tca = new TagClusteringAlgorithm();
+		for(MyPair<Tag, Tag> pair : tca.generateCoTags()) {
+			System.out.println("<" + pair.getValue0().getName() + ", " + pair.getValue1().getName() + ">");
+		}
+		for(Entry<MyPair<Tag, Tag>, Integer> entry : tca.getCoTagOccurences().entrySet()) {
+			System.out.println("<" + entry.getKey().getValue0().getName() + ", " + entry.getKey().getValue1().getName() + ">, " + entry.getValue());
+		}
+
+		/*InputData inputData = new InputData();
+		inputData.generateInputData();
+		Map<Triplet<Tag, Resource, User>, Boolean> tensor = inputData.getTensor();
+		for (Entry<Tuple<String, String, String>, Boolean> entry : tensor.entrySet()) {
+			System.out.println(entry.getKey());
+			System.out.println(entry.getValue());
+			System.out.println("\n");
+		}*/
+
 		/*System.out.println("Tags grouped by Links:\n");
 		for (Entry<String, Set<String>> entry : linkInspector.tagsGroupedByLink().entrySet()) {
 			System.out.println(entry);
-		}
-		for (Entry<String, Set<String>> entry : linkInspector.linksGroupedByTag().entrySet()) {
-			System.out.println(entry);
-		}
-		System.out.println("\n---------------------------------\n\n");*/
+		}*/
+		/*Set<Bookmark> bookmarks = linkInspector.getBookmarks();
+		for (Bookmark bookmark : bookmarks) {
+			System.out.println("Link: " + bookmark.getUrl());
+			System.out.println("User: " + bookmark.getUser());
+			System.out.println("Tags: " + bookmark.getTags() + "\n");
+		}*/
 
-		DocumentInspector di = new DocumentInspector();
-		for (String synonym : di.getWordWikiSynonyms("polyamory")) {
+		/*DocumentInspector di = new DocumentInspector();
+		for (String synonym : di.getWordWikiSynonyms("iphone")) {
 			System.out.println(synonym);
-		}
+		}*/
 
 		/*linkInspector.showHostOccurenceBucket();
 		linkInspector.generateCSVHostInPages();*/
@@ -38,7 +58,7 @@ public class Main {
 
 		/*TagSignature tagSignature = new TagSignature();
 		tagSignature.calculateTFIDF();
-		for (Entry<String, List<Double>> entry : tagSignature.getTermFrequencyInverseDocumentFrequencyVector().entrySet()) {
+		for (Entry<String, List<Double>> entry : tagSignature.getTermFrequencyInverseDocumentFrequencyMatrix().entrySet()) {
 			System.out.println(entry);
 		}*/
 

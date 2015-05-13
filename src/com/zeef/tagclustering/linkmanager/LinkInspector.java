@@ -14,41 +14,44 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.zeef.tagclustering.model.Link;
+import com.zeef.tagclustering.model.Bookmark;
+import com.zeef.tagclustering.model.Resource;
+import com.zeef.tagclustering.model.Tag;
 
 public class LinkInspector {
 
-	private List<String> ilegalLinks = new ArrayList<>();
+	private List<Resource> ilegalLinks = new ArrayList<>();
 	private LinkRetriever retriever = new LinkRetriever();
 
-	public List<String> getIlegalLinks() {
+	public List<Resource> getIlegalLinks() {
 		return ilegalLinks;
 	}
 
 	private Integer getLinksTotal() {
 		Integer totalLinks = 0;
-		Map<String, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<>();
 		try {
 			hostBucket = hostOccurrences();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		for (Entry<String, Integer> link : hostBucket.entrySet()) {
+		for (Entry<Resource, Integer> link : hostBucket.entrySet()) {
 			totalLinks += link.getValue();
 		}
 		return totalLinks;
 	}
 
-	private Map<String, Integer> hostOccurrences() throws SQLException {
+	private Map<Resource, Integer> hostOccurrences() throws SQLException {
 		ResultSet resultSet = retriever.getAllLinks();
 		URL url = null;
 		Integer hostCount = null;
-		Map<String, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<>();
 		while (resultSet.next()) {
 			try {
 				url = new URL(resultSet.getString("target_url"));
-				hostCount = hostBucket.get(url.getHost());
-				hostBucket.put(url.getHost(), (hostCount == null) ? 1 : hostCount + 1);
+				Resource resource = new Resource(url.getHost());
+				hostCount = hostBucket.get(resource);
+				hostBucket.put(resource, (hostCount == null) ? 1 : hostCount + 1);
 			} catch (MalformedURLException e) {
 				addIlegalUrl(resultSet.getString("target_url"));
 			}
@@ -56,21 +59,22 @@ public class LinkInspector {
 		return hostBucket;
 	}
 
-	private Map<String, Set<Integer>> getHostsInPages() throws SQLException {
+	private Map<Resource, Set<Integer>> getHostsInPages() throws SQLException {
 		ResultSet resultSet = retriever.getLinksXPages();
 		URL url = null;
-		Map<String, Set<Integer>> hostInPagesBucket = new HashMap<>();
+		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<>();
 		while (resultSet.next()) {
 			try {
 				Integer pageId = Integer.parseInt(resultSet.getString("page_id"));
 				url = new URL(resultSet.getString("target_url"));
+				Resource resource = new Resource(url.getHost());
 				if (hostInPagesBucket.get(url.getHost()) != null) {
-					hostInPagesBucket.get(url.getHost()).add(pageId);
+					hostInPagesBucket.get(resource).add(pageId);
 				}
 				else {
 					Set<Integer> pagesSet = new HashSet<>();
 					pagesSet.add(pageId);
-					hostInPagesBucket.put(url.getHost(), pagesSet);
+					hostInPagesBucket.put(resource, pagesSet);
 				}
 			} catch (MalformedURLException e) {
 				addIlegalUrl(resultSet.getString("target_url"));
@@ -79,22 +83,21 @@ public class LinkInspector {
 		return hostInPagesBucket;
 	}
 
-	public Set<String> getPositionedLinks() throws SQLException {
+	public Set<Resource> getPositionedLinks() throws SQLException {
 		ResultSet resultSet = retriever.getPositionedLinks();
-		Set<String> linksSet = new HashSet<>();
+		Set<Resource> linksSet = new HashSet<>();
 		while (resultSet.next()) {
-			linksSet.add(resultSet.getString("target_url"));
+			linksSet.add(new Resource(resultSet.getString("target_url")));
 		}
 		return linksSet;
 	}
 
-	public Map<Integer, Link> getTaggedLinks() {
+	public Map<Resource, Tag> getTaggedLinks() {
 		ResultSet resultSet = retriever.getTaggedLinks();
-		Map<Integer, Link> resultData = new HashMap<>();
-		Integer id = 0;
+		Map<Resource, Tag> resultData = new HashMap<>();
 		try {
 			while (resultSet.next()) {
-				resultData.put(id++, new Link(resultSet.getString("target_url"), resultSet.getString("name")));
+				resultData.put(new Resource(resultSet.getString("target_url")), new Tag(resultSet.getString("name")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -102,16 +105,16 @@ public class LinkInspector {
 		return resultData;
 	}
 
-	public Map<String, Set<String>> tagsGroupedByLink() {
-		Map<String, Set<String>> taggedLinksBucket = new HashMap<>();
-		for (Entry<Integer, Link> entry : getTaggedLinks().entrySet()) {
-			String url = entry.getValue().getLink();
-			String tag = entry.getValue().getTag();
+	public Map<Resource, Set<Tag>> tagsGroupedByLink() {
+		Map<Resource, Set<Tag>> taggedLinksBucket = new HashMap<>();
+		for (Entry<Resource, Tag> entry : getTaggedLinks().entrySet()) {
+			Resource url = entry.getKey();
+			Tag tag = entry.getValue();
 			if (taggedLinksBucket.get(url) != null) {
 				taggedLinksBucket.get(url).add(tag);
 			}
 			else {
-				Set<String> tagSet = new HashSet<>();
+				Set<Tag> tagSet = new HashSet<>();
 				tagSet.add(tag);
 				taggedLinksBucket.put(url, tagSet);
 			}
@@ -119,16 +122,16 @@ public class LinkInspector {
 		return taggedLinksBucket;
 	}
 
-	public Map<String, Set<String>> linksGroupedByTag() {
-		Map<String, Set<String>> taggedLinksBucket = new HashMap<>();
-		for (Entry<Integer, Link> entry : getTaggedLinks().entrySet()) {
-			String url = entry.getValue().getLink();
-			String tag = entry.getValue().getTag();
+	public Map<Tag, Set<Resource>> linksGroupedByTag() {
+		Map<Tag, Set<Resource>> taggedLinksBucket = new HashMap<>();
+		for (Entry<Resource, Tag> entry : getTaggedLinks().entrySet()) {
+			Resource url = entry.getKey();
+			Tag tag = entry.getValue();
 			if (taggedLinksBucket.get(tag) != null) {
 				taggedLinksBucket.get(tag).add(url);
 			}
 			else {
-				Set<String> urlSet = new HashSet<>();
+				Set<Resource> urlSet = new HashSet<>();
 				urlSet.add(url);
 				taggedLinksBucket.put(tag, urlSet);
 			}
@@ -136,14 +139,35 @@ public class LinkInspector {
 		return taggedLinksBucket;
 	}
 
+	public Set<Bookmark> getBookmarks() {
+		Set<Bookmark> bookmarks = new HashSet<>();
+		ResultSet resultSet = retriever.getTaggedLinks();
+		List<String> tags;
+		try {
+			while (resultSet.next()) {
+				tags = new ArrayList<>();
+				tags.add(resultSet.getString("tag_name"));
+				tags.add(resultSet.getString("page_title"));
+				tags.add(resultSet.getString("block_title"));
+				bookmarks.add(new Bookmark(resultSet.getString("full_name"),
+						new URL(resultSet.getString("target_url")), tags));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return bookmarks;
+	}
+
 	public void generateCSVHostInPages() {
-		Map<String, Set<Integer>> hostInPagesBucket = new HashMap<>();
+		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<>();
 		FileWriter writer = null;
 		try {
 			hostInPagesBucket = getHostsInPages();
 			writer = new FileWriter("/Users/santiagovalenciavargas/Desktop/file.csv");
-			for (Entry<String, Set<Integer>> hostInPage : hostInPagesBucket.entrySet()) {
-				writer.append(hostInPage.getKey() + ";" + hostInPage.getValue() + ";" + hostInPage.getValue().size() + "\n");
+			for (Entry<Resource, Set<Integer>> hostInPage : hostInPagesBucket.entrySet()) {
+				writer.append(hostInPage.getKey().getTargetURL() + ";" + hostInPage.getValue() + ";" + hostInPage.getValue().size() + "\n");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -153,14 +177,14 @@ public class LinkInspector {
 	}
 
 	public void showHostOccurenceBucket() {
-		Map<String, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<>();
 		try {
 			hostBucket = hostOccurrences();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		for (Entry<String, Integer> host : hostBucket.entrySet()) {
-			System.out.println("Host: " + host.getKey() + "| Occurrence: " + host.getValue());
+		for (Entry<Resource, Integer> host : hostBucket.entrySet()) {
+			System.out.println("Host: " + host.getKey().getTargetURL() + "| Occurrence: " + host.getValue());
 		}
 		System.out.println("Total links: " + getLinksTotal());
 		System.out.println("Total ilegal links: " + getIlegalLinks().size());
@@ -168,6 +192,6 @@ public class LinkInspector {
 	}
 
 	public void addIlegalUrl(String url) {
-		ilegalLinks.add(url);
+		ilegalLinks.add(new Resource(url));
 	}
 }

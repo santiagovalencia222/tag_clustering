@@ -13,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.zeef.tagclustering.linkmanager.LinkInspector;
+import com.zeef.tagclustering.model.Resource;
 
 public class HTMLParser {
 
@@ -29,12 +30,12 @@ public class HTMLParser {
 
 	public void extractMetaKeyWordsFromLinksSet() throws SQLException {
 		LinkInspector linkInspector = new LinkInspector();
-		Set<String> linksSet = linkInspector.getPositionedLinks();
-		for (String link : linksSet) {
+		Set<Resource> linksSet = linkInspector.getPositionedLinks();
+		for (Resource link : linksSet) {
 			try {
-				addMetaKeyWordsToMap(new URL(link));
+				addMetaKeyWordsToMap(new URL(link.getTargetURL()));
 			} catch (MalformedURLException e) {
-				linkInspector.addIlegalUrl(link);
+				linkInspector.addIlegalUrl(link.getTargetURL());
 			}
 		}
 	}

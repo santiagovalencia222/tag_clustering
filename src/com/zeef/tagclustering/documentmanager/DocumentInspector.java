@@ -26,6 +26,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.zeef.tagclustering.htmlparser.HTMLParser;
 import com.zeef.tagclustering.linkmanager.LinkInspector;
+import com.zeef.tagclustering.model.Resource;
+import com.zeef.tagclustering.model.Tag;
 
 public class DocumentInspector {
 
@@ -86,7 +88,7 @@ public class DocumentInspector {
 			JSONObject jsonObject = response.getBody().getObject();
 			JSONArray jsonArray = jsonObject.getJSONArray("terms");
 			for (int i = 0 ; i < jsonArray.length() ; i++) {
-				if (jsonArray.get(i).getClass().equals(jsonObject.getClass())) {
+				if (jsonArray.get(i).getClass().equals(JSONObject.class)) {
 					jsonObject = (JSONObject) jsonArray.get(i);
 					synonyms.add((String) jsonObject.get("term"));
 				} else if (jsonArray.get(i).getClass().equals(String.class)) {
@@ -97,19 +99,21 @@ public class DocumentInspector {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
 		}
 		return synonyms;
 	}
 
-	public Map<String, List<String>> getTaggedDocuments() throws MalformedURLException {
-		Map<String, List<String>> taggedDocuments = new HashMap<>();
-		LinkInspector li = new LinkInspector();
+	public Map<Tag, List<String>> getTaggedDocuments() throws MalformedURLException {
+		Map<Tag, List<String>> taggedDocuments = new HashMap<>();
+		LinkInspector inspector = new LinkInspector();
 		HTMLParser parser = new HTMLParser();
-		Map<String, Set<String>> taggedLinks = li.linksGroupedByTag();
-		for (Entry<String, Set<String>> entry : taggedLinks.entrySet()) {
+		Map<Tag, Set<Resource>> taggedLinks = inspector.linksGroupedByTag();
+		for (Entry<Tag, Set<Resource>> entry : taggedLinks.entrySet()) {
 			List<String> documents = new ArrayList<>();
-			for (String url : entry.getValue()) {
-				documents.add(parser.getBodyTextFromUrl(new URL(url)));
+			for (Resource resource : entry.getValue()) {
+				documents.add(parser.getBodyTextFromUrl(new URL(resource.getTargetURL())));
 			}
 			taggedDocuments.put(entry.getKey(), documents);
 		}
