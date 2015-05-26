@@ -37,10 +37,6 @@ public class GraphManager {
 					DefaultWeightedEdge e = undirectedGraph.addEdge(pair.getValue0().getName(), pair.getValue1().getName());
 					Double coTagOccurrence = getCoTagsOccurrence(pair, coTags);
 					undirectedGraph.setEdgeWeight(e, coTagOccurrence);
-					System.out.println("Edge " + count++);
-					System.out.println("Tag 1: " + pair.getValue0().getName());
-					System.out.println("Tag 2: " + pair.getValue1().getName());
-					System.out.println("Weight: " + undirectedGraph.getEdgeWeight(undirectedGraph.getEdge(pair.getValue0().getName(), pair.getValue1().getName())) + "\n");
 				}
 			} catch (NullPointerException e) {
 			}

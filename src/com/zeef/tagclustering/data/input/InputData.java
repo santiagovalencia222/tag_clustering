@@ -94,7 +94,7 @@ public class InputData {
 		}
 	}
 
-	public void generateInputData() {
+	public Set<Triplet<List<Tag>, Resource, User>> generateInputData() {
 		LinkRetriever retriever = new LinkRetriever();
 		ResultSet resultSet = retriever.getTaggedLinks();
 		Set<Triplet<List<Tag>, Resource, User>> rs = new HashSet<>();
@@ -114,10 +114,10 @@ public class InputData {
 				users.add(new User(resultSet.getString("full_name")));
 				resources.add(new Resource(resultSet.getString("target_url")));
 			}
-			populate3DTensor(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return rs;
 	}
 
 }
