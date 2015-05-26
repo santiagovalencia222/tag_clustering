@@ -75,7 +75,8 @@ public class GraphManager {
 			completeCoTagsBucket.put(edge, undirectedGraph.getEdgeWeight(edge));
 		}
 		Integer count = 0;
-		for (Entry<DefaultWeightedEdge, Double> entry : MapHelper.sortMapByValue(completeCoTagsBucket).entrySet()) {
+		completeCoTagsBucket = MapHelper.sortMapByValue(completeCoTagsBucket);
+		for (Entry<DefaultWeightedEdge, Double> entry : completeCoTagsBucket.entrySet()) {
 			if (count < MAX_TAGS) {
 				if (undirectedGraph.getEdgeSource(entry.getKey()).equals(tag)) {
 					listOfCoTags.add(new Tag(undirectedGraph.getEdgeTarget(entry.getKey())));
