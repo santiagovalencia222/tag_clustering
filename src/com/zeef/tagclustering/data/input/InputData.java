@@ -1,4 +1,4 @@
-package com.zeef.tagclustering;
+package com.zeef.tagclustering.data.input;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
 
-import com.zeef.tagclustering.linkmanager.LinkRetriever;
+import com.zeef.tagclustering.data.linkmanager.LinkRetriever;
 import com.zeef.tagclustering.model.Resource;
 import com.zeef.tagclustering.model.Tag;
 import com.zeef.tagclustering.model.User;
@@ -21,13 +22,15 @@ public class InputData {
 	private Set<Tag> tags;
 	private Set<User> users;
 	private Set<Resource> resources;
-	private Map<Triplet<Tag, Resource, User>, Boolean> tensor;
+	private Map<Triplet<Tag, Resource, User>, Boolean> _3Dtensor;
+	private Map<Pair<Tag, Resource>, Boolean> _2Dtensor;
 
 	public InputData() {
 		tags = new HashSet<>();
 		users = new HashSet<>();
 		resources = new HashSet<>();
-		tensor = new HashMap<>();
+		_3Dtensor = new HashMap<>();
+		_2Dtensor = new HashMap<>();
 	}
 
 	public Set<Tag> getTags() {
@@ -42,15 +45,23 @@ public class InputData {
 		return resources;
 	}
 
-	public Map<Triplet<Tag, Resource, User>, Boolean> getTensor() {
-		return tensor;
+	public Map<Triplet<Tag, Resource, User>, Boolean> get3DTensor() {
+		return _3Dtensor;
 	}
 
-	public void addTripletToTensor(Tag tag, Resource resource, User user) {
-		tensor.put(new Triplet<>(tag, resource, user), true);
+	public Map<Pair<Tag, Resource>, Boolean> get2DTensor() {
+		return _2Dtensor;
 	}
 
-	public void populateTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
+	public void addTripletTo3DTensor(Tag tag, Resource resource, User user) {
+		_3Dtensor.put(new Triplet<>(tag, resource, user), true);
+	}
+
+	public void addPairTo2DTensor(Tag tag, Resource resource) {
+		_2Dtensor.put(new Pair<>(tag, resource), true);
+	}
+
+	public void populate3DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
 		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
 			for (User user : users) {
 				for (Resource resource : resources) {
@@ -58,22 +69,29 @@ public class InputData {
 						if (rs.getValue0().contains(tag) &&
 								resource.equals(rs.getValue1()) &&
 										user.equals(rs.getValue2())) {
-							tensor.put(new Triplet<>(tag, resource, user), true);
+							_3Dtensor.put(new Triplet<>(tag, resource, user), true);
 						} else {
-							tensor.put(new Triplet<>(tag, resource, user), false);
+							_3Dtensor.put(new Triplet<>(tag, resource, user), false);
 						}
 					}
 				}
 			}
 		}
-		/*resultSet.parallelStream()
-		.forEach(rs -> users.parallelStream()
-				.forEach(user -> resources.parallelStream()
-						.forEach(resource -> tags.parallelStream()
-								.filter(tag -> (rs.getTags().contains(tag) &&
-												resource.equals(rs.getResource()) &&
-												user.equals(rs.getUser())))
-								.forEach(tag -> addTripleToTensor(tag, user, resource)))));*/
+	}
+
+	public void populate2DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
+		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
+			for (Resource resource : resources) {
+				for (Tag tag : tags) {
+					if (rs.getValue0().contains(tag) &&
+							resource.equals(rs.getValue1())) {
+						_2Dtensor.put(new Pair<>(tag, resource), true);
+					} else {
+						_2Dtensor.put(new Pair<>(tag, resource), false);
+					}
+				}
+			}
+		}
 	}
 
 	public void generateInputData() {
@@ -96,7 +114,7 @@ public class InputData {
 				users.add(new User(resultSet.getString("full_name")));
 				resources.add(new Resource(resultSet.getString("target_url")));
 			}
-			populateTensor(rs);
+			populate3DTensor(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -2,22 +2,28 @@ package com.zeef.tagclustering.main;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.util.Map.Entry;
 
-import com.zeef.tagclustering.TagClusteringAlgorithm;
-import com.zeef.tagclustering.model.MyPair;
-import com.zeef.tagclustering.model.Tag;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
+
+import com.zeef.tagclustering.data.graph.manager.GraphManager;
 
 public class Main {
 
 	public static void main(String[] args) throws SQLException, MalformedURLException {
-		TagClusteringAlgorithm tca = new TagClusteringAlgorithm();
-		for(MyPair<Tag, Tag> pair : tca.generateCoTags()) {
+		GraphManager tca = new GraphManager();
+		SimpleWeightedGraph<String, DefaultWeightedEdge> undirectedGraph = tca.buildUndirectedGraph();
+		System.out.println(tca.getMainCoTags("samsung"));
+		//System.out.println(undirectedGraph.toString());
+		//System.out.println(undirectedGraph.getAllEdges(new Tag("SEO"), new Tag("content-marketing")));
+		//System.out.println(undirectedGraph.getEdge("SEO", "content-marketing"));
+		//System.out.println(undirectedGraph.getEdgeWeight(undirectedGraph.getEdge("SEO", "content-marketing")));
+		/*for(Pair<Tag, Tag> pair : tca.generateCoTags()) {
 			System.out.println("<" + pair.getValue0().getName() + ", " + pair.getValue1().getName() + ">");
 		}
-		for(Entry<MyPair<Tag, Tag>, Integer> entry : tca.getCoTagOccurences().entrySet()) {
+		for(Entry<Pair<Tag, Tag>, Integer> entry : tca.getCoTagOccurences().entrySet()) {
 			System.out.println("<" + entry.getKey().getValue0().getName() + ", " + entry.getKey().getValue1().getName() + ">, " + entry.getValue());
-		}
+		}*/
 
 		/*InputData inputData = new InputData();
 		inputData.generateInputData();

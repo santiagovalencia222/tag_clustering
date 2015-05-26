@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.documentmanager;
+package com.zeef.tagclustering.data.documentmanager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -24,8 +24,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.zeef.tagclustering.data.linkmanager.LinkInspector;
 import com.zeef.tagclustering.htmlparser.HTMLParser;
-import com.zeef.tagclustering.linkmanager.LinkInspector;
 import com.zeef.tagclustering.model.Resource;
 import com.zeef.tagclustering.model.Tag;
 

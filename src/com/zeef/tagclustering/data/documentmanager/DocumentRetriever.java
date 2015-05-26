@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.documentmanager;
+package com.zeef.tagclustering.data.documentmanager;
 
 import java.sql.ResultSet;
 

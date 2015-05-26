@@ -12,9 +12,14 @@ public class Tag {
 		return name;
 	}
 
+	@Override
+	public String toString() {
+		return "[" + getName() + "]";
+	}
+
 	public Boolean equals(Tag tag) {
 		Boolean result = false;
-		if (tag.getName().equals(getName())) {
+		if (tag.getName().equalsIgnoreCase(getName())) {
 			result = true;
 		}
 		return result;

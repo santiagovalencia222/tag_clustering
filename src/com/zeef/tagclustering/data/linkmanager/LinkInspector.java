@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.linkmanager;
+package com.zeef.tagclustering.data.linkmanager;
 
 import java.io.FileWriter;
 import java.io.IOException;

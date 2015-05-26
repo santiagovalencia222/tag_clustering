@@ -12,7 +12,7 @@ import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.zeef.tagclustering.linkmanager.LinkInspector;
+import com.zeef.tagclustering.data.linkmanager.LinkInspector;
 import com.zeef.tagclustering.model.Resource;
 
 public class HTMLParser {

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.zeef.tagclustering.documentmanager.DocumentInspector;
+import com.zeef.tagclustering.data.documentmanager.DocumentInspector;
 import com.zeef.tagclustering.model.Tag;
 import com.zeef.tagclustering.tagsignature.frequencies.Frequency;
 import com.zeef.tagclustering.tagsignature.frequencies.InverseDocumentFrequencyImpl;
