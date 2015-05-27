@@ -25,7 +25,7 @@ public class Main {
 
 		//10 Most relevant tags based on a given key word
 		Tag tag = new Tag("sport");
-		System.out.println("3. The following are the 10 (or less) most relevant tags related with tag " + tag);
+		System.out.println("3. The following are the 10 (or less) most relevant tags related to tag: " + tag);
 		System.out.println(manager.getMainCoTags(tag));
 		System.out.println("Done!\n");
 

@@ -12,9 +12,7 @@ public class DBConnection {
 
 	public void doZEEFConnection() {
 		try {
-			connection = DriverManager.getConnection(
-					"jdbc:postgresql://pgdb0.amsterdam.kizitos.com:5432/zeef_update", "zeef",
-					"g3z3v3r");
+			connection = DriverManager.getConnection();
 		} catch (SQLException e) {
 			System.out.println("Connection Failed!");
 			e.printStackTrace();
