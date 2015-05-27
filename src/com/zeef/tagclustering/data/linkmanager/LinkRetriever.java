@@ -34,7 +34,7 @@ public class LinkRetriever {
 			+ "JOIN zeef_user ON page.user_id = zeef_user.id "
 			+ "JOIN page_tag ON page.id = page_tag.page_id "
 			+ "JOIN tag ON tag.id = page_tag.tag_id "
-			+ "WHERE alias.default_alias LIMIT 20");
+			+ "WHERE alias.default_alias");
 	}
 
 	public ResultSet executeQuery(String query) {

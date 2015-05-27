@@ -12,4 +12,23 @@ public class User {
 		return fullName;
 	}
 
+	@Override
+	public String toString() {
+		return getFullName();
+	}
+
+	@Override
+	public int hashCode() {
+	    return fullName.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		boolean result = false;
+		if ((((User) o).getFullName()).equals(getFullName())) {
+			result = true;
+		}
+		return result;
+	}
+
 }

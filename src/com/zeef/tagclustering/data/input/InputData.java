@@ -61,39 +61,6 @@ public class InputData {
 		_2Dtensor.put(new Pair<>(tag, resource), true);
 	}
 
-	public void populate3DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
-		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
-			for (User user : users) {
-				for (Resource resource : resources) {
-					for (Tag tag : tags) {
-						if (rs.getValue0().contains(tag) &&
-								resource.equals(rs.getValue1()) &&
-										user.equals(rs.getValue2())) {
-							_3Dtensor.put(new Triplet<>(tag, resource, user), true);
-						} else {
-							_3Dtensor.put(new Triplet<>(tag, resource, user), false);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public void populate2DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
-		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
-			for (Resource resource : resources) {
-				for (Tag tag : tags) {
-					if (rs.getValue0().contains(tag) &&
-							resource.equals(rs.getValue1())) {
-						_2Dtensor.put(new Pair<>(tag, resource), true);
-					} else {
-						_2Dtensor.put(new Pair<>(tag, resource), false);
-					}
-				}
-			}
-		}
-	}
-
 	public Set<Triplet<List<Tag>, Resource, User>> generateInputData() {
 		LinkRetriever retriever = new LinkRetriever();
 		ResultSet resultSet = retriever.getTaggedLinks();
@@ -116,8 +83,43 @@ public class InputData {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
 		}
 		return rs;
+	}
+
+	public void populate2DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
+		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
+			for (Resource resource : resources) {
+				for (Tag tag : tags) {
+					if (rs.getValue0().contains(tag) &&
+							resource.equals(rs.getValue1())) {
+						_2Dtensor.put(new Pair<>(tag, resource), true);
+					} else {
+						_2Dtensor.put(new Pair<>(tag, resource), false);
+					}
+				}
+			}
+		}
+	}
+
+	public void populate3DTensor(Set<Triplet<List<Tag>, Resource, User>> resultSet) {
+		for (Triplet<List<Tag>, Resource, User> rs : resultSet) {
+			for (User user : users) {
+				for (Resource resource : resources) {
+					for (Tag tag : tags) {
+						if (rs.getValue0().contains(tag) &&
+								resource.equals(rs.getValue1()) &&
+										user.equals(rs.getValue2())) {
+							_3Dtensor.put(new Triplet<>(tag, resource, user), true);
+						} else {
+							_3Dtensor.put(new Triplet<>(tag, resource, user), false);
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

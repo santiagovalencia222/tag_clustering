@@ -14,12 +14,18 @@ public class Tag {
 
 	@Override
 	public String toString() {
-		return "[" + getName() + "]";
+		return getName();
 	}
 
-	public Boolean equals(Tag tag) {
-		Boolean result = false;
-		if (tag.getName().equalsIgnoreCase(getName())) {
+	@Override
+	public int hashCode() {
+	    return name.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		boolean result = false;
+		if ((((Tag) o).getName()).equals(getName())) {
 			result = true;
 		}
 		return result;

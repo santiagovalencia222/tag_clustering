@@ -52,9 +52,10 @@ import org.jgrapht.ListenableGraph;
 import org.jgrapht.ext.JGraphModelAdapter;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.ListenableUndirectedWeightedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
-import com.zeef.tagclustering.data.graph.manager.GraphManager;
 // resolve ambiguity
+import com.zeef.tagclustering.model.Tag;
 
 
 /**
@@ -63,35 +64,23 @@ import com.zeef.tagclustering.data.graph.manager.GraphManager;
  * @author Barak Naveh
  * @since Aug 3, 2003
  */
-public class GraphVisualizer
-    extends JApplet
-{
-
+public class GraphVisualizer extends JApplet {
 
     private static final long serialVersionUID = 3256444702936019250L;
     private static final Color DEFAULT_BG_COLOR = Color.decode("#FAFBFF");
     private static final Dimension DEFAULT_SIZE = new Dimension(700, 800);
 
+    private JGraphModelAdapter<Tag, DefaultWeightedEdge> jgAdapter;
 
+    private final ListenableGraph<Tag, DefaultWeightedEdge> graph;
 
-    //
-    private JGraphModelAdapter<String, DefaultWeightedEdge> jgAdapter;
+    public GraphVisualizer(SimpleWeightedGraph<Tag, DefaultWeightedEdge> graph) {
+    	this.graph = new ListenableUndirectedWeightedGraph<>(graph);
+    }
 
-
-
-    /**
-     * An alternative starting point for this demo, to also allow running this
-     * applet as an application.
-     *
-     * @param args ignored.
-     */
-    public static void main(String [] args)
-    {
-        GraphVisualizer applet = new GraphVisualizer();
-        applet.init();
-
+    public void drawGraph() {
         JFrame frame = new JFrame();
-        frame.getContentPane().add(applet);
+        frame.getContentPane().add(this);
         frame.setTitle("JGraphT Adapter to JGraph Demo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -104,11 +93,7 @@ public class GraphVisualizer
     @Override
 	public void init()
     {
-    	GraphManager manager = new GraphManager();
-
-        ListenableGraph<String, DefaultWeightedEdge> g = new ListenableUndirectedWeightedGraph<String, DefaultWeightedEdge>(manager.buildUndirectedGraph());
-
-        jgAdapter = new JGraphModelAdapter<String, DefaultWeightedEdge>(g);
+        jgAdapter = new JGraphModelAdapter<>(graph);
 
         JGraph jgraph = new JGraph(jgAdapter);
 
@@ -116,6 +101,7 @@ public class GraphVisualizer
         getContentPane().add(jgraph);
         resize(DEFAULT_SIZE);
 
+        drawGraph();
     }
 
     private void adjustDisplaySettings(JGraph jg)

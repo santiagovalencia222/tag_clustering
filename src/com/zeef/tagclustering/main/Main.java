@@ -1,48 +1,49 @@
 package com.zeef.tagclustering.main;
 
-import java.util.List;
-import java.util.Set;
-
-import org.javatuples.Triplet;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 import com.zeef.tagclustering.data.graph.manager.GraphManager;
-import com.zeef.tagclustering.data.input.InputData;
-import com.zeef.tagclustering.model.Resource;
+import com.zeef.tagclustering.gui.graphvisualizer.GraphVisualizer;
 import com.zeef.tagclustering.model.Tag;
-import com.zeef.tagclustering.model.User;
 
 public class Main {
 
 	public static void main(String[] args) {
+
+		//Generate a graph of co-tags
+		System.out.println("1. Generating Undirected Weighted Tag Graph...");
+		GraphManager manager = new GraphManager();
+		SimpleWeightedGraph<Tag, DefaultWeightedEdge> graph = manager.buildUndirectedGraph();
+		System.out.println("Done!\n");
+
+		//Drawing the graph
+		System.out.println("2. Drawing the graph...");
+		GraphVisualizer gv = new GraphVisualizer(graph);
+		gv.init();
+		System.out.println("Done!");
+
+		//10 Most relevant tags based on a given key word
+		Tag tag = new Tag("sport");
+		System.out.println("3. The following are the 10 (or less) most relevant tags related with tag " + tag);
+		System.out.println(manager.getMainCoTags(tag));
+		System.out.println("Done!\n");
+
+
 		//Generate the input data from DB to construct the Folksonomy
-		System.out.println("1. Constructing the folksonomy...");
+		/*System.out.println("1. Constructing the folksonomy...");
 		InputData input = new InputData();
 		System.out.println("\t1.1. Generating the input data...");
 		Set<Triplet<List<Tag>, Resource, User>> folksonomy = input.generateInputData();
 		System.out.println("\tDone!\n");
+
+		//Populate 2D & 3D tensors with the input data previously generated
 		System.out.println("\t1.2. Populating 2D & 3D tensors...");
 		input.populate2DTensor(folksonomy);
 		System.out.println("\t\t1.2.1. 2D tensor populated!");
 		input.populate3DTensor(folksonomy);
 		System.out.println("\t\t1.2.2. 3D tensor populated!");
 		System.out.println("\tDone!\n");
-
-		//Generate a graph of co-tags
-		System.out.println("2. Generating Undirected Weighted Tag Graph...");
-		GraphManager manager = new GraphManager();
-		manager.buildUndirectedGraph();
-		System.out.println("Done!\n");
-
-		//10 Most relevant tags based on a given key word
-		String tag = "seo";
-		System.out.println("3. The following are the 10 (or less) most relevant tags related with [" + tag + "]");
-		System.out.println(manager.getMainCoTags(tag));
-
-
-
-
-
-
 
 		//System.out.println(undirectedGraph.toString());
 		//System.out.println(undirectedGraph.getAllEdges(new Tag("SEO"), new Tag("content-marketing")));
