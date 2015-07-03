@@ -151,8 +151,6 @@ public class ExperimentBean implements Serializable {
     public void getTagRecommendations() {
     	Integer id = 0;
 
-    	executeZTG();
-    	/*
     	//Execute ZEEFTagClustering Algorithm. Recommended tags are placed in the recommendedTags map
 	    for (Tag tag : executeZTG()) {
 	    	recommendedTags.put(id++, new Pair<String, Integer>(tag.getName(), 1));
@@ -167,183 +165,17 @@ public class ExperimentBean implements Serializable {
 	    for (Tag tag : executeR()) {
 	    	recommendedTags.put(id++, new Pair<String, Integer>(tag.getName(), 3));
 	    }
-    	totalRecommendedTags = recommendedTags.size();*/
+    	totalRecommendedTags = recommendedTags.size();
     }
 
-	private void executeZTG() {
+	private List<Tag> executeZTG() {
+		List<Tag> recommendedTagsZTG = new ArrayList<Tag>();
 		GraphManager manager = new GraphManager();
-		SimpleWeightedGraph<Tag, DefaultWeightedEdge> undirectedGraph = manager.buildUndirectedGraph();
-		TagRetriever r = new TagRetriever();
-		r.updateblah("cro", 
-				"tools-(that-will-make-you-live-easier)", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("cro"), 
-								new Tag("tools-(that-will-make-you-live-easier)"))));
-		
-		r.updateblah("volvooceanrace", 
-				"race-news", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("volvooceanrace"), 
-								new Tag("race-news"))));
-		
-		r.updateblah("volvooceanrace", 
-				"abu-dhabi-ocean-racing", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("volvooceanrace"), 
-								new Tag("abu-dhabi-ocean-racing"))));
-		
-		r.updateblah("poker", 
-				"online-poker-for-playmoney", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("poker"), 
-								new Tag("online-poker-for-playmoney"))));
-		
-		r.updateblah("jobs", 
-				"sites-emploi", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("jobs"), 
-								new Tag("sites-emploi"))));
-		
-		r.updateblah("amsterdam", 
-				"iamsterdam", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("amsterdam"), 
-								new Tag("iamsterdam"))));
-		
-		r.updateblah("handmade", 
-				"social-media-groups", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("handmade"), 
-								new Tag("social-media-groups"))));
-		
-		r.updateblah("handmade", 
-				"instruments", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("handmade"), 
-								new Tag("instruments"))));
-		
-		r.updateblah("java", 
-				"webapp", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("java"), 
-								new Tag("webapp"))));
-		
-		r.updateblah("shopping", 
-				"mensclothing", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("shopping"), 
-								new Tag("mensclothing"))));
-		
-		r.updateblah("java", 
-				"j2ee", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("java"), 
-								new Tag("j2ee"))));
-		
-		r.updateblah("training", 
-				"vj-tools", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("training"), 
-								new Tag("vj-tools"))));
-		
-		r.updateblah("bookmarking", 
-				"marketing", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("bookmarking"), 
-								new Tag("marketing"))));
-		
-		r.updateblah("search", 
-				"promomasters", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("search"), 
-								new Tag("promomasters"))));
-		
-		r.updateblah("amsterdam", 
-				"tips", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("amsterdam"), 
-								new Tag("tips"))));
-		
-		r.updateblah("amsterdam", 
-				"bitterballen", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("amsterdam"), 
-								new Tag("bitterballen"))));
-		
-		r.updateblah("shopping", 
-				"mensclothing", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("shopping"), 
-								new Tag("mensclothing"))));
-		
-		r.updateblah("development", 
-				"springframework", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("development"), 
-								new Tag("springframework"))));
-		
-		r.updateblah("electronics", 
-				"drones", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("electronics"), 
-								new Tag("drones"))));
-		
-		r.updateblah("creativity", 
-				"technology", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("creativity"), 
-								new Tag("technology"))));
-		
-		r.updateblah("poker", 
-				"gambling", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("poker"), 
-								new Tag("gambling"))));
-		
-		r.updateblah("handmade", 
-				"books-&-magazines", 
-				undirectedGraph.getEdgeWeight(
-						undirectedGraph.getEdge(
-								new Tag("handmade"), 
-								new Tag("books-&-magazines"))));
-		
-		
-		/*Map<Tag, List<Pair<Tag, Double>>> mainCoTags = null;
-		ResultSet rs = r.getDistinctQueryTags();
-		Tag tag = null;
-		try {
-			while (rs.next()) {
-				tag = new Tag(rs.getString("qt"));
-				mainCoTags = manager.getMainCoTags(tag);
-				System.out.println(tag + " - " + manager.getMainCoTags(tag));
-				for (Pair<Tag, Double> pair : mainCoTags.get(tag)) {
-					r.updateZEEFTCOWeightResults(tag.getName(), pair.getValue0().getName(), pair.getValue1());
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}*/
+		manager.buildUndirectedGraph();
+		Tag tag = new Tag(queryTag);
+		Map<Tag, List<Tag>> mainCoTags = manager.getMainCoTags(tag);
+		recommendedTagsZTG = mainCoTags.get(tag);
+		return recommendedTagsZTG;
 	}
 	
 	private List<Tag> executeFR() {

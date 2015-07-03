@@ -87,9 +87,9 @@ public class GraphManager {
 		return coTaggedResources;
 	}
 
-	public Map<Tag, List<Pair<Tag, Double>>> getMainCoTags(Tag tag) {
-		Map<Tag, List<Pair<Tag, Double>>> mainCoTagsBucket = new HashMap<Tag, List<Pair<Tag, Double>>>();
-		List<Pair<Tag, Double>> listOfCoTags = new ArrayList<Pair<Tag, Double>>();
+	public Map<Tag, List<Tag>> getMainCoTags(Tag tag) {
+		Map<Tag, List<Tag>> mainCoTagsBucket = new HashMap<Tag, List<Tag>>();
+		List<Tag> listOfCoTags = new ArrayList<Tag>();
 		Map<DefaultWeightedEdge, Double> allCoTagsBucket = new HashMap<DefaultWeightedEdge, Double>();
 		for (DefaultWeightedEdge edge : undirectedGraph.edgesOf(tag)) {
 			allCoTagsBucket.put(edge, undirectedGraph.getEdgeWeight(edge));
@@ -104,9 +104,9 @@ public class GraphManager {
 					!Helper.containsIgnoreCase(target.getName(), stopWords)) {
 				if (count < MAX_TAGS) {
 					if (source.equals(tag)) {
-						listOfCoTags.add(new Pair(target, undirectedGraph.getEdgeWeight(entry.getKey())));
+						listOfCoTags.add(target);
 					} else {
-						listOfCoTags.add(new Pair(source, undirectedGraph.getEdgeWeight(entry.getKey())));
+						listOfCoTags.add(source);
 					}
 				}
 				count++;
