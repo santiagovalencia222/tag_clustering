@@ -1,7 +1,11 @@
 package com.zeef.tagclustering.model;
 
-public class Tag {
+import java.io.Serializable;
 
+public class Tag implements Serializable {
+
+	private static final long serialVersionUID = 6579297301511755652L;
+	
 	private String name;
 
 	public Tag(String name) {
