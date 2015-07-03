@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a4j="http://richfaces.org/a4j" 
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:head>
+	    <title><ui:insert name="title">Experiment</ui:insert></title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	</h:head>
+	<h:body>
+			<h1>Tag Recommendation experiment</h1>
+			<h:outputText value="Hello #{experimentBean.participantName}!"
+				rendered="#{not empty experimentBean.participantName}" /><br />
+        	<ui:insert name="body"></ui:insert>
+	</h:body>
+</html>

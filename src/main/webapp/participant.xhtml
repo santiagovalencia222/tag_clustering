@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a4j="http://richfaces.org/a4j">
+
+	<body>
+	    <ui:composition template="/templates/template.xhtml">
+	        <ui:define name="body">
+	            <h:form id="indexform">
+                	Beforehand, I would like to thank you for your time and for being part
+                	of this experiment.<br /><br />
+                	The following are the steps to succesfuly carry out the experiment:<br />
+                	1. Click on the <i>Start</i> button to start the experiment.<br />
+                	2. You will see a list with all the tags placed on your ZEEF pages, please select one. This will be your <i>query tag</i>.<br />
+                	3. Once you've selected your <i>query tag</i> you will automatically be redirected to the next step.<br />
+                	4. The system will show ~30 <i>recommended tags</i>, please evaluate each of them in terms of its relevancy to the <i>query tag</i>.<br />
+                	5. Repeat steps 2-4 five times selecting a different <i>query tag</i> each round.<br />
+                	<br /><br />
+	                <h:commandButton action="#{experimentBean.generateParticipantTagList}" value="Start" />
+				</h:form>
+	        </ui:define>
+	    </ui:composition>
+	</body>
+</html>
+
+
+

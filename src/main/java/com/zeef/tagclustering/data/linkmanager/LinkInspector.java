@@ -14,13 +14,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.zeef.tagclustering.data.DataInspector;
+import com.zeef.tagclustering.helper.Helper;
 import com.zeef.tagclustering.model.Bookmark;
 import com.zeef.tagclustering.model.Resource;
 import com.zeef.tagclustering.model.Tag;
 
-public class LinkInspector {
+public class LinkInspector implements DataInspector{
 
-	private List<Resource> ilegalLinks = new ArrayList<>();
+	private List<Resource> ilegalLinks = new ArrayList<Resource>();
 	private LinkRetriever retriever = new LinkRetriever();
 
 	public List<Resource> getIlegalLinks() {
@@ -29,7 +31,7 @@ public class LinkInspector {
 
 	private Integer getLinksTotal() {
 		Integer totalLinks = 0;
-		Map<Resource, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<Resource, Integer>();
 		try {
 			hostBucket = hostOccurrences();
 		} catch (SQLException e) {
@@ -45,7 +47,7 @@ public class LinkInspector {
 		ResultSet resultSet = retriever.getAllLinks();
 		URL url = null;
 		Integer hostCount = null;
-		Map<Resource, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<Resource, Integer>();
 		while (resultSet.next()) {
 			try {
 				url = new URL(resultSet.getString("target_url"));
@@ -62,7 +64,7 @@ public class LinkInspector {
 	private Map<Resource, Set<Integer>> getHostsInPages() throws SQLException {
 		ResultSet resultSet = retriever.getLinksXPages();
 		URL url = null;
-		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<>();
+		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<Resource, Set<Integer>>();
 		while (resultSet.next()) {
 			try {
 				Integer pageId = Integer.parseInt(resultSet.getString("page_id"));
@@ -72,7 +74,7 @@ public class LinkInspector {
 					hostInPagesBucket.get(resource).add(pageId);
 				}
 				else {
-					Set<Integer> pagesSet = new HashSet<>();
+					Set<Integer> pagesSet = new HashSet<Integer>();
 					pagesSet.add(pageId);
 					hostInPagesBucket.put(resource, pagesSet);
 				}
@@ -85,7 +87,7 @@ public class LinkInspector {
 
 	public Set<Resource> getPositionedLinks() throws SQLException {
 		ResultSet resultSet = retriever.getPositionedLinks();
-		Set<Resource> linksSet = new HashSet<>();
+		Set<Resource> linksSet = new HashSet<Resource>();
 		while (resultSet.next()) {
 			linksSet.add(new Resource(resultSet.getString("target_url")));
 		}
@@ -94,7 +96,7 @@ public class LinkInspector {
 
 	public Map<Resource, Tag> getTaggedLinks() {
 		ResultSet resultSet = retriever.getTaggedLinks();
-		Map<Resource, Tag> resultData = new HashMap<>();
+		Map<Resource, Tag> resultData = new HashMap<Resource, Tag>();
 		try {
 			while (resultSet.next()) {
 				resultData.put(new Resource(resultSet.getString("target_url")), new Tag(resultSet.getString("name")));
@@ -106,7 +108,7 @@ public class LinkInspector {
 	}
 
 	public Map<Resource, Set<Tag>> tagsGroupedByLink() {
-		Map<Resource, Set<Tag>> taggedLinksBucket = new HashMap<>();
+		Map<Resource, Set<Tag>> taggedLinksBucket = new HashMap<Resource, Set<Tag>>();
 		for (Entry<Resource, Tag> entry : getTaggedLinks().entrySet()) {
 			Resource url = entry.getKey();
 			Tag tag = entry.getValue();
@@ -114,7 +116,7 @@ public class LinkInspector {
 				taggedLinksBucket.get(url).add(tag);
 			}
 			else {
-				Set<Tag> tagSet = new HashSet<>();
+				Set<Tag> tagSet = new HashSet<Tag>();
 				tagSet.add(tag);
 				taggedLinksBucket.put(url, tagSet);
 			}
@@ -123,7 +125,7 @@ public class LinkInspector {
 	}
 
 	public Map<Tag, Set<Resource>> linksGroupedByTag() {
-		Map<Tag, Set<Resource>> taggedLinksBucket = new HashMap<>();
+		Map<Tag, Set<Resource>> taggedLinksBucket = new HashMap<Tag, Set<Resource>>();
 		for (Entry<Resource, Tag> entry : getTaggedLinks().entrySet()) {
 			Resource url = entry.getKey();
 			Tag tag = entry.getValue();
@@ -131,7 +133,7 @@ public class LinkInspector {
 				taggedLinksBucket.get(tag).add(url);
 			}
 			else {
-				Set<Resource> urlSet = new HashSet<>();
+				Set<Resource> urlSet = new HashSet<Resource>();
 				urlSet.add(url);
 				taggedLinksBucket.put(tag, urlSet);
 			}
@@ -140,15 +142,15 @@ public class LinkInspector {
 	}
 
 	public Set<Bookmark> getBookmarks() {
-		Set<Bookmark> bookmarks = new HashSet<>();
+		Set<Bookmark> bookmarks = new HashSet<Bookmark>();
 		ResultSet resultSet = retriever.getTaggedLinks();
 		List<String> tags;
 		try {
 			while (resultSet.next()) {
-				tags = new ArrayList<>();
+				tags = new ArrayList<String>();
 				tags.add(resultSet.getString("tag_name"));
-				tags.add(resultSet.getString("page_title"));
-				tags.add(resultSet.getString("block_title"));
+				tags.add(Helper.normalizeZEEFPageBlockTitle(resultSet.getString("page_title")));
+				tags.add(Helper.normalizeZEEFPageBlockTitle(resultSet.getString("block_title")));
 				bookmarks.add(new Bookmark(resultSet.getString("full_name"),
 						new URL(resultSet.getString("target_url")), tags));
 			}
@@ -161,7 +163,7 @@ public class LinkInspector {
 	}
 
 	public void generateCSVHostInPages() {
-		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<>();
+		Map<Resource, Set<Integer>> hostInPagesBucket = new HashMap<Resource, Set<Integer>>();
 		FileWriter writer = null;
 		try {
 			hostInPagesBucket = getHostsInPages();
@@ -177,7 +179,7 @@ public class LinkInspector {
 	}
 
 	public void showHostOccurenceBucket() {
-		Map<Resource, Integer> hostBucket = new HashMap<>();
+		Map<Resource, Integer> hostBucket = new HashMap<Resource, Integer>();
 		try {
 			hostBucket = hostOccurrences();
 		} catch (SQLException e) {

@@ -1,4 +1,4 @@
-package com.zeef.tagclustering.data.graph.manager;
+package com.zeef.tagclustering.data.graphmanager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import com.zeef.tagclustering.data.linkmanager.LinkRetriever;
-import com.zeef.tagclustering.helpers.MapHelper;
+import com.zeef.tagclustering.helper.Helper;
 import com.zeef.tagclustering.model.Resource;
 import com.zeef.tagclustering.model.Tag;
 
@@ -25,7 +25,7 @@ public class GraphManager {
 	private static final Integer MAX_TAGS = 10;
 
 	public GraphManager() {
-		undirectedGraph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+		undirectedGraph = new SimpleWeightedGraph<Tag, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 	}
 
 	public SimpleWeightedGraph<Tag, DefaultWeightedEdge> buildUndirectedGraph() {
@@ -45,7 +45,7 @@ public class GraphManager {
 	}
 
 	public Map<Pair<Tag, Tag>, Set<Resource>> generateCoTaggedResourcesMap() {
-		Map<Pair<Tag, Tag>, Set<Resource>> coTaggedResources = new HashMap<>();
+		Map<Pair<Tag, Tag>, Set<Resource>> coTaggedResources = new HashMap<Pair<Tag, Tag>, Set<Resource>>();
 		LinkRetriever retriever = new LinkRetriever();
 		ResultSet resultSet = retriever.getTaggedLinks();
 		try {
@@ -56,26 +56,26 @@ public class GraphManager {
 								resultSet.getString("target_url") != null) {
 
 					Tag tag = new Tag(resultSet.getString("tag_name"));
-					Tag pageTitle = new Tag(resultSet.getString("page_title"));
-					Tag blockTitle = new Tag(resultSet.getString("block_title"));
+					Tag pageTitle = new Tag(Helper.normalizeZEEFPageBlockTitle(resultSet.getString("page_title")));
+					Tag blockTitle = new Tag(Helper.normalizeZEEFPageBlockTitle(resultSet.getString("block_title")));
 					Resource resource = new Resource(resultSet.getString("target_url"));
 
 					Set<Resource> set = null;
 
-					Pair<Tag, Tag> pair1 = new Pair<>(tag, pageTitle);
+					Pair<Tag, Tag> pair1 = new Pair<Tag, Tag>(tag, pageTitle);
 					if (coTaggedResources.get(pair1) != null) {
 						coTaggedResources.get(pair1).add(resource);
 					} else {
-						set = new HashSet<>();
+						set = new HashSet<Resource>();
 						set.add(resource);
 						coTaggedResources.put(pair1, set);
 					}
 
-					Pair<Tag, Tag> pair2 = new Pair<>(tag, blockTitle);
+					Pair<Tag, Tag> pair2 = new Pair<Tag, Tag>(tag, blockTitle);
 					if (coTaggedResources.get(pair2) != null) {
 						coTaggedResources.get(pair2).add(resource);
 					} else {
-						set = new HashSet<>();
+						set = new HashSet<Resource>();
 						set.add(resource);
 						coTaggedResources.put(pair2, set);
 					}
@@ -87,27 +87,33 @@ public class GraphManager {
 		return coTaggedResources;
 	}
 
-	public Map<Tag, List<Tag>> getMainCoTags(Tag tag) {
-		Map<Tag, List<Tag>> mainCoTagsBucket = new HashMap<>();
-		List<Tag> listOfCoTags = new ArrayList<>();
-		Map<DefaultWeightedEdge, Double> allCoTagsBucket = new HashMap<>();
+	public Map<Tag, List<Pair<Tag, Double>>> getMainCoTags(Tag tag) {
+		Map<Tag, List<Pair<Tag, Double>>> mainCoTagsBucket = new HashMap<Tag, List<Pair<Tag, Double>>>();
+		List<Pair<Tag, Double>> listOfCoTags = new ArrayList<Pair<Tag, Double>>();
+		Map<DefaultWeightedEdge, Double> allCoTagsBucket = new HashMap<DefaultWeightedEdge, Double>();
 		for (DefaultWeightedEdge edge : undirectedGraph.edgesOf(tag)) {
 			allCoTagsBucket.put(edge, undirectedGraph.getEdgeWeight(edge));
 		}
 		Integer count = 0;
-		allCoTagsBucket = MapHelper.sortMapByValue(allCoTagsBucket);
-		System.out.println(allCoTagsBucket);
+		allCoTagsBucket = Helper.sortMapByValue(allCoTagsBucket);
+		Set<String> stopWords = Helper.getStopWords();
 		for (Entry<DefaultWeightedEdge, Double> entry : allCoTagsBucket.entrySet()) {
-			if (count < MAX_TAGS) {
-				if (undirectedGraph.getEdgeSource(entry.getKey()).equals(tag)) {
-					listOfCoTags.add(undirectedGraph.getEdgeTarget(entry.getKey()));
-				} else {
-					listOfCoTags.add(undirectedGraph.getEdgeSource(entry.getKey()));
+			Tag source = undirectedGraph.getEdgeSource(entry.getKey());
+			Tag target = undirectedGraph.getEdgeTarget(entry.getKey());
+			if (!Helper.containsIgnoreCase(source.getName(), stopWords) &&
+					!Helper.containsIgnoreCase(target.getName(), stopWords)) {
+				if (count < MAX_TAGS) {
+					if (source.equals(tag)) {
+						listOfCoTags.add(new Pair(target, undirectedGraph.getEdgeWeight(entry.getKey())));
+					} else {
+						listOfCoTags.add(new Pair(source, undirectedGraph.getEdgeWeight(entry.getKey())));
+					}
 				}
+				count++;
 			}
-			count++;
 		}
 		mainCoTagsBucket.put(tag, listOfCoTags);
 		return mainCoTagsBucket;
 	}
+
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:a4j="http://richfaces.org/a4j">
+	
+	<body>
+	    <ui:composition template="/templates/template.xhtml">
+	    	<ui:define name="body">
+				<h:form id="usertagsform">
+					Round #{experimentBean.round}<br />
+					<h:outputLabel for="tags" >
+						The following tags are placed in one or more of your ZEEF pages, 
+						please select one:
+					</h:outputLabel><br />
+					<h:selectOneRadio id="tags" value="#{experimentBean.queryTag}" 
+						onclick="$('#progress').show();" >
+						<f:selectItems value="#{experimentBean.participantTagList}" /> 
+						<f:ajax onevent="disableRadios" listener="#{experimentBean.getRecommendationsListener}" />
+			       	</h:selectOneRadio>
+			       	<br />
+			       	<div id="progress" style="display:none">
+				       	<h:outputText value="Getting recommendations for you, please wait. (Do not refresh the page)" /><br />
+				       	<img src="resources/img/ajax-loader.gif"/>
+			       	</div>
+			       	<script>
+						function disableRadios(data) {
+							if (data.status == "begin") {
+								$("#usertagsform input:radio").attr('disabled',true);
+							}
+						}
+			       	</script>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+	</body>
+</html>
+

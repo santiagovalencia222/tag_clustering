@@ -2,28 +2,28 @@ package com.zeef.tagclustering.data.linkmanager;
 
 import java.sql.ResultSet;
 
-import com.zeef.tagclustering.db.DBConnection;
+import com.zeef.tagclustering.data.DataRetriever;
 
-public class LinkRetriever {
+public class LinkRetriever extends DataRetriever{
 
 	public ResultSet getAllLinks() {
-		return executeQuery("SELECT link.target_url FROM link");
+		return executeSelectQueryZEEF("SELECT link.target_url FROM link");
 	}
 
 	public ResultSet getLinksXPages() {
-		return executeQuery("SELECT link.target_url, block.page_id "
+		return executeSelectQueryZEEF("SELECT link.target_url, block.page_id "
 			+ "FROM link, block, link_position WHERE link_position.link_block_id = block.id AND "
 			+ "link.id = link_position.link_id");
 	}
 
 	public ResultSet getPositionedLinks() {
-		return executeQuery("SELECT DISTINCT link.target_url FROM link, block, link_position "
+		return executeSelectQueryZEEF("SELECT DISTINCT link.target_url FROM link, block, link_position "
 			+ "WHERE link_position.link_block_id = block.id AND link.id = link_position.link_id  "
 			+ "AND link.target_url LIKE 'http%' LIMIT 200");
 	}
 
 	public ResultSet getTaggedLinks() {
-		return executeQuery("SELECT DISTINCT link.target_url, tag.name AS tag_name, "
+		return executeSelectQueryZEEF("SELECT DISTINCT link.target_url, tag.name AS tag_name, "
 			+ "zeef_user.full_name,	alias.name AS page_title, block.title AS block_title "
 			+ "FROM page "
 			+ "JOIN subject ON subject.id = page.subject_id "
@@ -37,9 +37,4 @@ public class LinkRetriever {
 			+ "WHERE alias.default_alias");
 	}
 
-	public ResultSet executeQuery(String query) {
-		DBConnection connection = new DBConnection();
-		connection.doZEEFConnection();
-		return connection.executeQuery(query);
-	}
 }
